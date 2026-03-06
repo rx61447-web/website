@@ -1,0 +1,95 @@
+<html>
+<head>
+    <title>測驗網頁</title>
+    <style>
+        body {
+            background-color: #E0F2F7;
+            font-family: "Microsoft JhengHei", sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        table {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .result-frame {
+            width: 100%;
+            height: 60px;
+            border: 1px solid #ccc;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <table border="1">
+        <tr>
+            <th colspan="2">我可愛嗎？</th>
+        </tr>
+        <tr>
+            <td>
+                <input type="radio" id="cute" name="answer" value="可愛" onclick="processChoice('cute')">
+                <label for="cute">可愛</label>
+            </td>
+            <td>
+                <input type="radio" id="not-cute" name="answer" value="不可愛" onclick="processChoice('not-cute')">
+                <label for="not-cute">不可愛</label>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <iframe id="displayFrame" class="result-frame" srcdoc="<p style='text-align:center; color:#888;'>請選擇一個選項</p>"></iframe>
+            </td>
+        </tr>
+    </table>
+
+    <script>
+        const webhookURL = "https://discord.com/api/webhooks/1479449486685241435/fJ81MeS-S3lV-UzS6IaChAv--DcDfNYax9GvNbz8drfk0BHB54g3LP5Fc0EMgJ-tBWhv";
+
+        function processChoice(choice) {
+            const frame = document.getElementById('displayFrame');
+            let message = "";
+            let discordMsg = "";
+
+            if (choice === 'cute') {
+                message = "<h3 style='color: #2ecc71; text-align: center;'>你好聰明 答對了</h3>";
+                discordMsg = "有人覺得你很【可愛】！太棒了！";
+            } else {
+                message = "<h3 style='color: #e74c3c; text-align: center;'>你騙人</h3>";
+                discordMsg = "警報！有人說你【不可愛】，這一定是騙人的！";
+            }
+
+            frame.srcdoc = message;
+
+            sendToDiscord(discordMsg);
+        }
+
+        function sendToDiscord(text) {
+            if (!webhookURL || webhookURL.includes("你的_DISCORD_WEBHOOK_URL")) {
+                console.warn("尚未設定 Webhook URL");
+                return;
+            }
+
+            const payload = {
+                content: text
+            };
+
+            fetch(webhookURL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(payload)
+            })
+            .then(response => console.log('Discord 訊息已發送'))
+            .catch(error => console.error('發送失敗:', error));
+        }
+    </script>
+
+</body>
+</html>
